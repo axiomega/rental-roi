@@ -26,11 +26,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  double _roi = 0;
+  double _low = 0;
+  double _hi = 0;
   double _homeCost = 300000;
   double _taxPct = 2.416721;
   double _mRent = 3000;
-  double _insurance = 700;
+  double _insurancePct = 0.25;
   final pctFormatter = new NumberFormat("#.##%");
 
   void _setCost(String s) {
@@ -43,20 +44,17 @@ class _MyHomePageState extends State<MyHomePage> {
     _setROI();
   }
 
-  void _setInsurance(String s) {
-    _insurance = double.parse(s);
-    _setROI();
-  }
-
   void _setROI() {
     setState(() {
-      double revenue = _mRent * 12;
       double aTax = _homeCost * (_taxPct / 100);
-      double aInsurance = _insurance;
+      double aInsurance = _homeCost * (_insurancePct /100);
       double aMgmt = _mRent * 12 * 0.1;
       double aMaint = _homeCost * 0.02;
-      double income = revenue - aTax - aInsurance - aMgmt - aMaint;
-      _roi = income / _homeCost;
+      double aVacancy = 1/12;
+      double newTenant = 500;
+      double income = _mRent * 12 * (1-aVacancy) - newTenant - aTax - aInsurance - aMgmt - aMaint;
+      _low = income / _homeCost;
+      _hi = ( _mRent * 12 - aTax - aInsurance - aMgmt - aMaint/2) / _homeCost;
     });
   }
 
@@ -79,14 +77,6 @@ class _MyHomePageState extends State<MyHomePage> {
               keyboardType: TextInputType.number,
             ),
             new TextFormField(
-              initialValue: '$_insurance',
-              onChanged: _setInsurance,
-              decoration: new InputDecoration(
-                labelText: "Insurance Premium",
-              ),
-              keyboardType: TextInputType.number,
-            ),
-            new TextFormField(
               initialValue: '$_mRent',
               onChanged: _setMRent,
               decoration: new InputDecoration(
@@ -98,7 +88,11 @@ class _MyHomePageState extends State<MyHomePage> {
               'ROI:',
             ),
             Text(
-              pctFormatter.format(_roi),
+              pctFormatter.format(_low),
+              style: Theme.of(context).textTheme.display1,
+            ),
+            Text(
+              pctFormatter.format(_hi),
               style: Theme.of(context).textTheme.display1,
             ),
           ],
