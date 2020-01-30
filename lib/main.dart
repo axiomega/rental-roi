@@ -55,7 +55,9 @@ class _MyHomePageState extends State<MyHomePage> {
       double aInsurance = _insurance;
       double aMgmt = _mRent * 12 * 0.1;
       double aMaint = _homeCost * 0.02;
-      double income = revenue - aTax - aInsurance - aMgmt - aMaint;
+      // 1/2 month vacancy per year
+      double aVacancy = _mRent * 0.5;
+      double income = revenue - aTax - aInsurance - aMgmt - aMaint - aVacancy;
       _roi = income / _homeCost;
     });
   }
